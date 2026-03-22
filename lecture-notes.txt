@@ -1,0 +1,244 @@
+Standard investment asset classes
+
+Stocks (equities)
+- High risk, but historically outperform most other assets over long periods
+
+Bonds (fixed income)
+- Low risk, less volatility than stocks but subject to interest rate and credit risks.
+
+Foreign currencies
+- Betting on changes in exchange rates between currencies
+- High volatility, influenced by global events, interest rates and economic data
+- Used for short-term trading or speculation
+
+Commodities
+- Physical goods
+- Prices volatile due to supply-demand shocks
+
+Real estate
+- Risk depends on location, market cycles and liquidity
+- Used for diversification and long-term wealth building
+
+------
+------
+------
+
+- Stocks used to raise capital by selling shares, which represent a claim on future profits
+- Selling stocks is a way to raise capital instead of - or in addition to - borrowing from a bank
+- If more investors want to buy a stock, its price will increase
+- Profit on a stock can be made by selling it for a higher price
+- Stocks also pay dividends. There is no obligation for a company to pay dividends.
+- Stock's risk is measured by its volatility - the measure of the dispersion of the returns for a given security
+
+-------
+-------
+-------
+
+- Commodity prices are highly volatile
+- Future contracts are used to compensate some of this risk (negotiate a price to be paid for a commodity in the future)
+- Commodities and futures contracts are traded on futures markets
+
+-------
+-------
+-------
+
+- Over-the-counter is a decentralised trading system
+- Less regulation, transparency and lower liquidity
+- There are no central exchanges like NYSE or Nasdaq -- FOREX is OTC by default!
+- Trading is done via broker-dealers, not an exchange
+- There are no best bid and best ask prices available
+- Different dealers may show different prices at the same time (arbitrage opportunities)
+- Exchange rates are influenced by:
+	- interest rate changes due to central banks (higher interest rate -> stronger currency)
+	- money supply/inflation (inflation is bad for currency strength)
+	- geopolitical events/financial stability (politics can influence exchange rates)
+
+- Bull market - market shows steady price increases (here long positions profit)
+- Bear market - market shows steady price decreases (here short positions profit)
+
+-------
+-------
+-------
+
+Bonds
+- principal amount/face value/par value
+- coupon rate, interest rate
+	- zero bonds have no coupons, but a "premium" paid at maturity
+- time-to-maturity
+- present value of bond is the sum of the present value of all future cash flows (this holds for all fixed income instruments)
+- yield-to-maturity (YTM) - the internal rate of return earned by an investor who buys a bond today at market price
+	- assumes bond held to maturity and the cashflows are paid on time
+	- YTM is often solved for numerically
+- bond price is inversely proportional to market interest rate
+	- i.e. present value is inversely proportional to r, the interest rate
+	- lower market interest rate -> higher value of bond
+	- this is why bonds are subject to interest rate risk, because their value is affected by changing interest rates on the market
+- Macaulay duration - a measure of how long it takes for the price of a bond to be repaid by the cash flows from it
+	- for zero-bonds, the Macaulay duration is equal to the time-to-maturity
+	- Macaulay duration, T = - dPV/dr * 1/PV
+	- bonds with longer time-to-maturity are more sensitive to interest rate risk
+- Investors prefer bonds with longer maturity when interest rates are expected to fall
+	- this might be the mechanism which leads to yield-curve inversion: more demand for long-running bonds pushes the yield curve down at the long-end and up at the short-end -> leads to an inversion
+- Investors prefer bonds with shorter maturity when interest rates are expected to rise
+- Risk associated with bonds:
+	- interest rate risk: changing interest rates on the market affect the value of a bond
+	- default risk: the risk that the bond issuer is unable to make principle and coupon payments on time
+	- inflation risk: the value of cash flows may be affected due to inflation
+- Bonds and monetary policy:
+	- central banks buy and sells bonds to control the supply of money in the economy
+	- Open Market Operations (OMOs) - the buying and selling of government bonds by the central bank in the open market
+		- if the central bank buys bonds from commercial banks, the commercial banks will have more cash available
+			- this means lending is cheaper -> interest rates fall (spending is more attractive, inflation rises)
+		- if the central bank sells bonds to the commercial banks, the cash reserves of the commercial banks reduces. This means that lending is more expensive -> there should be less money available in the economy, slowing down lending/spending (thus, slowing inflation)
+- Current yield - the annual coupon payment as a fraction of the bond's price
+- Stocks vs. bonds
+	- stocks are shares in the ownership of a business
+	- bonds are a form of debt that the issuing entity promises to repay at some point in the future
+	- stockholders have voting rights, bond holders do not
+	- bonds have no dividends
+	- bonds are seen as safer investments
+- Pricing bonds:
+	- bonds must be priced using the market interest rate to account for the opportunity cost of investing money elsewhere at that prevailing rate.
+	- the market interest rate reflects the current cost of capital.
+
+-------
+-------
+-------
+
+Modern portfolio theory (Markowitz model):
+- Mean = E[x] = \mu	("expected return")
+- Variance = E[(x-\mu)^2] = Var(x) = std(x)^2	("risk")
+- Covariance = E[(x-\mu_x)(y-\mu_y)] = Cov(x,y)
+- Correlation = Cov(x,y) / (std(x) * std(y))
+	- a dimensionless measure of how two variables move together
+	- for stocks in a portfolio, you want to have as little correlation as possible between the values
+- Modern portfolio theory first formulated by Harry Markowitz in 1952
+	- a model for portfolio optimisation in terms of expected return (mean) and risk (variance)
+	- known as "Markowitz model"
+- Portfolio: a collection of financial investments such as stocks, bonds, commodities and cash
+- Idea: combine multiple assets in order to reduce risk as much as possible ("diversification")
+- Assumptions of Markowitz model:
+	1) asset returns are normally distributed
+	2) more risk equals more return
+- An efficient portfolio is a portfolio that has the highest return for a given level of risk or the lowest risk for a given return
+- Does not account for short positions?
+- Log daily returns (logarithm of daily returns).
+	- Used because of mathematical convenience
+- Key portfolio variables: 
+	- asset weights
+	- asset returns (historical data is used)
+	- asset expected returns (calculated as average of returns)
+- Expected return of a portfolio is the weighted average of the expected returns of the constituent assets
+	- scalar product between weight vector and mean vector (each element corresponds to a single asset)
+- Risk of portfolio is measured by the volatility, which can be approximated by the standard deviation of the variance
+- Sharpe ratio is the ratio of the excess return you receive for taking on excess volatility which you endure by taking on a riskier asset
+- The optimal portfolio has the highest Sharpe ratio
+- Optimal portfolio lies on the Capital Market Line (CML). This line is tangential to the optimal portfolio on a return-risk diagram. To the left of the intersection, you have the "lending" side, where you have diluted your risky asset with a risk-free asset, lowering the expected return. To the right of the intersection, we have the "borrowing" side where you gain additional return by borrowing risk-free assets to invest more in the risky asset (the portfolio is "leveraged")
+
+-------
+-------
+-------
+
+Capital Asset Pricing Model (CAPM)
+
+- Diversification cannot eliminate all risk
+
+Types of risks in finance:
+- unsystematic (specific) risk: the component of a stock's return that is not correlated with market movements.
+	- Diversification reduces unsystematic risk!
+- systematic (market) risk: this risk cannot be diversified away. This risk arises due to interest rate changes, recessions or wars. The CAPM model measures this risk with the \beta parameter.
+
+- CAPM was formulated by William Sharpe in the early 1960s
+- Expected return r_a of an investment: 
+	E[r_a] = r_f + \beta_a * (E[r_m] - r_f)
+r_f: risk-free return
+r_m: market return (e.g. S&P 500 index)
+E[r_m] - r_f: "market premium"
+\beta_a: multiplication factor
+
+\beta_a = Cov(r_a, r_m) / Var(r_m): defines how risky your portfolio is relative to the market
+It measures the stock's relative volatility compared to the rest of the market.
+\beta_a = 1: stock moves exactly as market
+\beta_a < 1: stock is less volatile than the market, expect a lower return
+\beta_a > 1: stock is more volatile than the market, expect a higher return
+\beta_a = 0: the stock has no systematic risk (i.e. risk-free)
+A portfolio's \beta is the weighted sum of the \beta values of the stocks in the portfolio.
+
+\beta_a is determined using linear regression.
+\beta_a measures the systematic risk. \alpha is the intercept of the linear function, which is assumed to be zero in CAPM. 
+
+-------
+-------
+-------
+
+Derivatives
+
+- Financial contracts whose value depends on the price of an underlying asset. It's value depends on fluctuations in the value of the underlying asset.
+- Very flexible/creative - there can be derivatives for any financial asset (commodities, currencies, stocks, bonds, real-estate - e.g. credit derivatives)
+- Useful for hedging risk and for speculation (i.e. making profit)
+- Forwards/futures - contract between parties to buy something at a specified date at a specified price. Forwards are OTC. Futures are ETD.
+	- Futures involve daily settlement, forwards do not (?)
+		- Ah, because futures have to be cleared. That involves a variation margin.
+
+Leverage
+
+- The use of borrowed money or financial instruments to create large exposure with a relatively small initial investment, amplifying both gains and losses.
+- Trader has to pay margin and financing costs associated with the borrowed capital.
+- Collateral - assets pledge to secure your obligations. This may be cash, securities, crypto or other approved assets.
+	- A margin is a type of collateral. It is a portion of collateral that brokers require to open a leveraged position and which absorbs day-to-day losses.
+	- Initial margin - the initial collateral posted as the position is opened
+	- Maintenance margin - the minimum margin which must be on the margin account
+		- If margin account falls below maintenance margin, there is a "margin call".
+- Derivatives are leveraged assets.
+
+Forward contracts
+
+- unlike options, these are obligations to buy/sell at the pre-agreed price
+- Forward Rate Agreements - lock-in an interest rate for a future time period (i.e. lock-in a forward-rate)
+
+-------
+-------
+-------
+
+Swaps
+
+- Main types: interest rate swap, currency (FX) swap, credit default swaps
+- FX swap:
+	- exchange two currencies at today's rate (spot)
+	- reverse the exchange at a future date (forward) at a pre-agreed rate
+	- two legs: spot transaction, forward transaction
+	- FX forward rates depend on interest rates in the two currencies
+
+- Credit Default Swaps can be used to hedge bond default risk
+	- you own a bond
+	- you own a CDS for protection from default of the issuer of the bond
+	- if nothing happens, you receive the bond coupons and pay the CDS premium
+	- if the default happens, the bond's value drops sharply but the CDS pays the loss amount. 
+		- so the default loss is offset
+
+-------
+-------
+-------
+
+Options
+
+- Like futures contracts EXCEPT there is no obligation to trade -- the person who is long on the option has the right to trade
+- Non-linear valuation function
+- A short call option is NOT a put option
+	- an investor who shorts a call pockets the premium, but has to sell the underlying to the counterparty a the strike price if they exercise their right to buy
+- Long Call: right to buy
+- Long Put: right to sell
+- The potential loss of short options is unbounded (!)
+	- infinite loss!
+- American option: may be exercised at any time before the expiration date
+- European option: may be exercises only at a single pre-defined point in time, which is the expiry date
+- Put-Call Parity:
+	- portfolio 1: long call, short put
+		- if stock price is above or below the strike price, the net payoff is the same
+	- portfolio 2: long stock, borrow present value of strike price
+		- has identical payoffs to portfolio 1
+	- *** since portfolio 1 and 2 have the same payoff at expiration, their present values must be equal ***
+	- This means that if we know the value of a call option, we can calculate the value of the put optioon for the same underlying, strike price and expiry date
+- The price of an option is calculated using the Black-Scholes Model
+
+
