@@ -16,9 +16,9 @@ This repo contains self-contained Python scripts that implement:
 
 Key modules:
 
-- `MarkowitzModel.py` – Mean-variance portfolio optimisation, efficient frontier, tangency portfolio.
-- `CAPM.py` – Beta estimation, security market line, expected returns under CAPM.
-- `BlackScholes.py` – European option pricing and Greeks under the Black-Scholes model.
+- `markowitz_model.py` – Mean-variance portfolio optimisation, efficient frontier, find tangency portfolio.
+- `capm.py` – Beta estimation, security market line, expected returns under CAPM.
+- `black_scholes.py` – European option pricing and Greeks under the Black-Scholes model.
 - `MonteCarloOptionPricing.py` – Monte Carlo simulation for option pricing (path simulation, payoff averaging).
 - `ValueAtRisk.py` – Historical and/or parametric VaR calculations for portfolios.
 - `BondPricingWithVasicekModel.py` – Zero-coupon bond pricing under the Vasicek interest-rate model.
@@ -26,7 +26,7 @@ Key modules:
 - `PricingFutureContract.py` – Fair futures price via cost-of-carry.
 - `PresentValue.py` – Present-value and related TVM utilities.
 - `WienerProcess.py` – Simulation of standard Brownian motion / Wiener paths.
-- `ExerciseNormalDistribution.py` – Exercises and utilities involving the normal distribution.
+- `get_price_returns.py` – Utilities for retrieving price time series and calculating log returns.
 - `lecture-notes.txt` – Concise notes on key formulas and concepts used across the scripts.
 
 Supporting files:
