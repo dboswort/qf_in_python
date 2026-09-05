@@ -3,6 +3,8 @@ This module simulates interest rate processes over time according to the Vasicek
 model via the Euler-Maruyama method and determines the bond price via Monte-Carlo simulation.
 """
 
+from time import time
+
 import matplotlib.pyplot as plt
 import numpy as np
 from numba import njit
@@ -18,21 +20,13 @@ def price_bond_monte_carlo(principal, r0, kappa, theta, sigma, T=1, num_simulati
     :param theta: the long-term mean interest rate
     :param sigma: the volatility of the interest rate
     :param T: the time horizon for the simulation (default is 1 year)
-    :return: rates: an array of simulated interest rate paths, bond_price: the present value of the bond
+    :return: bond_price: the present value of the bond, rates: an array of simulated interest rate paths, time_grid: the time grid for the simulation
     """
     dt = T / num_time_steps
-
+    time_grid = np.linspace(0, T, num_time_steps + 1)
     rates = simulate_vasicek_euler(r0, kappa, theta, sigma, dt, num_time_steps, num_simulations)
-
-    plt.plot(rates.T)
-    plt.title('Ornstein-Uhlenbeck process: mean reversion')
-    plt.xlabel('Time')
-    plt.ylabel('Interest Rate')
-    plt.grid(True)
-    plt.show()
-
     bond_price = get_present_value(principal, rates, dt)
-    return rates, bond_price
+    return bond_price, rates, time_grid
 
 @njit
 def simulate_vasicek_euler(r0: float, kappa: float, theta: float, sigma: float, dt: float, num_steps: int, num_paths: int) -> np.ndarray:
@@ -75,8 +69,23 @@ def get_present_value(principal: float, rates: np.ndarray, dt: float) -> float:
     return bond_price
 
 
+def plot_interest_rate_paths(rates: np.ndarray, time_grid: np.ndarray) -> None:
+    """
+    Plot the simulated interest rate paths.
+    :param rates: an array of simulated interest rate paths
+    :param time_grid: the time grid for the simulation
+    :return: None
+    """
+    plt.plot(time_grid, rates.T)
+    plt.title('Mean-reverting Ornstein-Uhlenbeck process (Vasicek model)')
+    plt.xlabel('Time')
+    plt.ylabel('Interest Rate')
+    plt.grid(True)
+    plt.show()
+
+
 if __name__ == "__main__":
-    rates, bond_price = price_bond_monte_carlo(
+    bond_price, rates, time_grid = price_bond_monte_carlo(
             principal=1000, 
             r0=0.1, 
             kappa=0.08, 
