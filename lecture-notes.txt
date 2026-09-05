@@ -242,3 +242,124 @@ Options
 - The price of an option is calculated using the Black-Scholes Model
 
 
+
+-------
+-------
+-------
+
+Random behaviour in Finance
+
+- Fundamental analysis looks at a companies assets, liabilities and earning reports and so on to find the value of a company
+- A powerful tool in the fundamental analysis of a company's performance is the price-to-earnings ratio
+- Price-to-Earnings (P/E) ratio:
+    PE = Share price / Earnings per share
+    Earnings per share = Net Income / Number of Shares
+- Technical analysis focuses instead on historical price changes in stock. The price of the stock reflects the value of the company
+    - they look for specific patterns in the historical data
+- Quantitative analysis tries to model the behaviour of financial assets
+
+- Daily price returns approximately follow a normal distribution (though, bear in mind the fat-tails - more of a Cauchy distribution)
+- Quantitative analysis models returns as random variables drawn from some kind of distribution
+- Stock price developments can be modelled as a random walk (Wiener process)
+
+Wiener Process and Random Walk
+- a continuous-time stochastic process with independent, normally-distributed increments
+- assumption: the return of a given stock price is normally distributed
+- assumption: each increment is independent of the one before
+- assumption: stock prices follow a log-normal distribution -- i.e. the logarithm of X is normally-distributed
+- Wiener process assumes changes in price are normally distributed, with mean zero and variance dt
+- Random walk equation: stochastic differential equation
+- dS = \mu S dt + \sigma S dW
+    - dS = change in Stock price
+    - dt = time step (deterministic part)
+    - dW = change in Wiener process W(t+dt) - W(t) ~ N(0,dt) (stochastic part)
+    - S = current stock price
+
+-------
+-------
+-------
+
+The Black-Scholes Model and the Greeks
+
+- solution of the Black-Scholes model is the price of an option at a given time
+- The Delta - the rate of change of the option price with respect to the price of the underlying
+- The Gamma - the rate of change of the Delta with respect to the price of the underlying
+- The Theta - the rate of change of the option price with respect to time
+- The Vega  - the rate of change of the option price with respect to volatility
+
+- historical volatility - the volatility of an option's price based off historical returns
+- implied volatility - the volatility of an option's price which ensures that the option price from the Black-Scholes model matches the market price
+    - we take the price to be equal to the market price and solve for the volatility from the BS equation
+    - implied volatility is often described as the "market sentiment" about future uncertainty
+    - rule of thumb: increasing volatility leads to higher option values -> more uncertainty in the value of the underlying makes options on that underlying more valuable
+- BS model assumes a constant implied volatility (this disagrees with what we see in the markets in general)
+- The CBOE Volatility Index (VIX) is a real-time index that represents the market's expectations for the relative strength of near-term price changes of the S&P 500 index
+    - VIX is calculated using historical and implied volatilities from option prices
+
+Monte-Carlo simulations
+- a method used to model uncertainty by running many random simulations of possible future outcomes
+- it solves a deterministic problem using probabilistic methods
+- can be used to predict stock price movements by running multiple random walk simulations (Wiener process)
+    - we know the solution for a stock's price from Ito's lemma of the underlying stochastic differential equation
+
+Option pricing with Monte Carlo simulations
+- assumption: the underlying asset follows a geometric random walk, governed by a stochastic differential equation
+- Wiener process is a random walk with mean 0 and variance t
+- the mu-drift (deterministic part of the SDE) is given by the risk-free rate
+
+Option trading strategies
+- Option trading is about volatility - buying an option is only worth it when we expect large changes in price of underlying
+- Straddle strategy: long call and put with same expiry and strike price.
+    - called the straddle strategy because the PnL diagram as a function of S(T) is a saddle (finite loss for small changes in underlying prie, big gains for large changes in underlying price)
+
+Value-at-Risk (VaR)
+ - higher risk = higher return (conclusion of Modern Portfolio Theory and CAPM)
+    - beta parameter: how risky is the asset in comparison to the rest of the market?
+ - The trainer demonstrated a method for calculating the VaR by using historical data and assuming that the returns follow a normal distribution.
+    - In the first implementation, he calculated the mean and standard deviation of the normal distribution and simply read the corresponding quantile
+    - In the second implementation, he used a Monte-Carlo simulation to build up a distribution of possible returns.
+        - This involves the solution to the geometric random walk (solved using Ito's lemma - chain rule for SDE)
+        - The solution for the stock price over time requires mean and standard deviation parameters.
+            - To obtain these, he used historical data and again assumed that the data fits a normal distribution
+
+Collateralised Debt Obligations (CDOs)
+- Commercial banks can issue and approve several types of loans
+- As part of managing their risk appetite, they sell these loans on to investment banks
+- Investment banks turn these loans into a complex product called a CDO
+    - they sell these to investors (e.g. institutional investors) seeking higher returns than treasury bills and bonds
+- Institutional investors are responsible for investing large pools of money on behalf of others
+    - examples: pension funds, university endowments, insurance companies, mutual funds, hedge funds
+- Retail investors are individuals investing their own money
+- High net-worth investors/Family Offices are another category of investor
+- Sovereign wealth funds
+- A CDO gives the owner all cash flows associated with that product
+    - sensitive to credit risk
+    - a good CDO will contain loans which are uncorrelated (diverisification)
+        - keep correlations close to zero
+- CDOs are classified into different "tranches", which essentially means different levels of credit risk
+    - more risky loans will give higher returns
+- The demand for more CDOs potentially led to the creation of sub-prime mortgages
+    - essentially, mortgages granted to individuals with poor credit scores which would normally not qualify for a conventional mortgage
+- A high amount of defaulting, correlated sub-prime mortgages fuelled the global financial crisis (GFC)
+
+Interest rate modelling
+- goal is to predict the future value of interest rates
+- interest rates are believed to be "mean-reverting processes", in contrast to geometric random walks which increase steadily over time (modelling of stocks)
+- Ornstein-Uhlenbeck process (Vasicek model)
+    - a stochastic process WITHOUT A DRIFT
+    - instead, values fluctuate around a mean ("mean-reversion")
+- The Vasicek model is a a simple model for interest rates with small time-to-maturity (i.e. for short-term lending)
+    - effects bonds, mortgages and credit derivatives
+    - influenced by political decisions, economic states (these we cannot model with Vasicek - too complex)
+    - Vasicek model assumes that short-term interest rates follow a mean-reverting Ornstein-Uhlenbeck process
+
+Long-term investing
+- the opposite to algorithmic trading (buy-and-hold strategies)
+    - algorithmic trading is about making money quickly using quantitative methods to outperform the market
+- value investing: Benjamin Graham, Warren Buffet
+    - looks for under-valued products to invest long-term in
+    - tends to invest in companies, not stocks (using fundamental analysis of assets, liabilities and earning sheets etc)
+    - value investors decide whether to buy a stock by looking at the relationship between the value of the stock and its current price
+- efficient market hypothesis: "it is impossible to beat the market"
+    - assumption: all available information about a company/product is already included in its stock price
+
