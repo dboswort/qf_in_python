@@ -1,12 +1,12 @@
 """
-In this script, we find the optimal weightings of a portfolio of assets.
+Monte-Carlo mean-variance portfolio optimisation model based on Markowitz's Modern Portfolio Theory (MPT).
 
-1) Historical log daily returns are calculated from stock price data taken from Yahoo Finance via the yfinance package.
-2) A number of random portfolios are generated and their annual returns and volatility are calculated.
-3) Scipy optimisation methods are used to additionally find the portfolio with the highest Sharpe ratio:
-    Sharpe Ratio = Annual Return / Annual Volatility
-4) The portfolios on the "efficient frontier" are visualised using matplotlib
+Historical log daily returns are calculated from stock price data taken from Yahoo Finance.
+Random portfolios are generated and their annual returns and volatility are calculated.
+Scipy optimisation methods are used to additionally find the tangency and global minimum variance portfolios.
+The portfolios on the "efficient frontier" are visualised using matplotlib
 
+Note: in this implementation, short-selling is not allowed, i.e. all asset weights must be between 0 and 1.
 """
 
 import numpy as np
@@ -31,8 +31,7 @@ def download_data(assets: list, start_date: date, end_date: date) -> pd.DataFram
         ticker = yf.Ticker(stock)
         stock_data[stock] = ticker.history(start=start_date, end=end_date)['Close']
 
-    df = pd.DataFrame(stock_data)
-    df.index = df.index.date
+    df = pd.DataFrame(stock_data).dropna()  # drop rows with NaN values
     return df
 
 
@@ -43,7 +42,6 @@ def calculate_returns(data: pd.DataFrame) -> pd.DataFrame:
     :return log_returns: pd.DataFrame
     """
     log_returns = np.log(data/data.shift(1))
-
     return log_returns[1:]  # drop the first row containing NaN
 
 
@@ -76,42 +74,28 @@ def show_statistics(returns: pd.DataFrame, n_trading_days: int) -> None:
 def generate_portfolios(assets: list, returns: pd.DataFrame, n_portfolios: int, n_trading_days: int) -> tuple[NDArray[np.float64],
                                                                             NDArray[np.float64], NDArray[np.float64]]:
     """
-    Generate random portfolios and calculate their expected returns and standard deviations.
+    Generate random portfolios and calculate their annualised expected returns and standard deviations.
     :param assets: list of asset tickers
     :param returns: pd.DataFrame
     :param n_portfolios: int
     :param n_trading_days: int
     :return: tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]
     """
-    portfolio_means = []
-    portfolio_risks = []
-    portfolio_weights = []
-    for _ in range(n_portfolios):
-        w = np.random.random(len(assets))   
-        w /= np.sum(w)                      # ensure weights sum to 1
-        portfolio_weights.append(w)
-        portfolio_means.append(np.sum(returns.mean() * w) * n_trading_days)
-        portfolio_risks.append(np.sqrt(np.dot(w.T, np.dot(returns.cov() * n_trading_days, w))))
-    return np.array(portfolio_weights), np.array(portfolio_means), np.array(portfolio_risks)
+    mu = returns.mean()         # returns vector
+    cov_matrix = returns.cov()  # covariance matrix
+    randlist = np.random.rand(n_portfolios , len(assets)-1)  # generate random weights for each asset in each portfolio
+    pf_weights = np.zeros((randlist.shape[0], randlist.shape[1]+1)) 
+    pf_returns = np.zeros(randlist.shape[0])
+    pf_stdevs = np.zeros(randlist.shape[0])
+    for idx, row in enumerate(randlist):
+        pf_weights[idx,:-1] = row
+        pf_weights[idx,-1] = 1-row.sum() # asset allocations must sum to 1 
+        pf_returns[idx] = pf_weights[idx].T @ mu * n_trading_days
+        pf_stdevs[idx] = np.sqrt(n_trading_days * pf_weights[idx].T @ cov_matrix @ pf_weights[idx])
+    return pf_weights, pf_returns, pf_stdevs
 
 
-def show_portfolios(returns: NDArray[np.float64], volatilities: NDArray[np.float64]) -> None:
-    """
-    Plot the expected returns and volatilities of the generated portfolios.
-    :param returns: NDArray[np.float64]
-    :param volatilities: NDArray[np.float64]
-    :return None:
-    """
-    plt.figure(figsize=(10, 5))
-    plt.scatter(volatilities, returns, c=returns/volatilities, marker='o')
-    plt.grid(True)
-    plt.xlabel('Standard Deviation (Volatility)')
-    plt.ylabel('Expected Return')
-    plt.colorbar(label='Sharpe Ratio')
-    plt.show()
-
-
-def statistics(weights: NDArray[np.float64], returns: NDArray[np.float64], n_trading_days: int, risk_free_rate: float = 0.02) -> NDArray[np.float64]:
+def get_portfolio_statistics(weights: NDArray[np.float64], returns: pd.DataFrame, n_trading_days: int, risk_free_rate: float) -> NDArray[np.float64]:
     """
     Calculate expected return, volatility, and Sharpe ratio of a portfolio with given weights over the specified number of trading days.
     :param returns: pd.DataFrame
@@ -131,7 +115,7 @@ def statistics(weights: NDArray[np.float64], returns: NDArray[np.float64], n_tra
     return np.array([portfolio_return, portfolio_volatility, sharpe_ratio])
 
 
-def min_function_sharpe(weights: NDArray[np.float64], returns: pd.DataFrame, n_trading_days: int, risk_free_rate: float = 0.02) -> NDArray[np.float64]:
+def min_function_sharpe(weights: NDArray[np.float64], returns: pd.DataFrame, n_trading_days: int, risk_free_rate: float) -> float:
     """
     Returns the negative Sharpe ratio of a portfolio with given weights over the specified number of trading days.
     This is used as the objective function for optimization, as we want to maximize the Sharpe ratio: the maximum of f(x) is the minimum of -f(x).
@@ -139,14 +123,30 @@ def min_function_sharpe(weights: NDArray[np.float64], returns: pd.DataFrame, n_t
     :param returns: pd.DataFrame
     :param n_trading_days: int
     :param risk_free_rate: float
-    :return: NDArray[np.float64]
+    :return: float
     """
-    return -statistics(weights, returns, n_trading_days, risk_free_rate)[2]
+    sharpe_ratio = get_portfolio_statistics(weights, returns, n_trading_days, risk_free_rate)[2]
+    return -sharpe_ratio  # negative Sharpe ratio for minimization 
 
 
-def optimize_portfolio(assets: list, weights: NDArray[np.float64], returns: pd.DataFrame, n_trading_days: int, risk_free_rate: float = 0.02):
+def min_function_variance(weights: NDArray[np.float64], returns: pd.DataFrame, n_trading_days: int, risk_free_rate: float) -> float:
+    """
+    Returns the variance of a portfolio with given weights over the specified number of trading days.
+    This is used as the objective function for optimization, as we want to minimize the variance.
+    :param weights: NDArray[np.float64]
+    :param returns: pd.DataFrame
+    :param n_trading_days: int
+    :param risk_free_rate: float
+    :return: float
+    """
+    variance = get_portfolio_statistics(weights, returns, n_trading_days, risk_free_rate)[1] ** 2
+    return variance
+
+
+def get_tangency_portfolio(assets: list, weights: NDArray[np.float64], returns: pd.DataFrame, n_trading_days: int, risk_free_rate: float):
     """
     Optimize the portfolio weights to maximize the Sharpe ratio using scipy's minimize function.
+    Constraints and bounds are set to ensure that the sum of weights is equal to 1 and that each weight is between 0 and 1 (i.e. no short-selling).
     :param assets: list of asset tickers
     :param weights: NDArray[np.float64]
     :param returns: pd.DataFrame
@@ -154,79 +154,65 @@ def optimize_portfolio(assets: list, weights: NDArray[np.float64], returns: pd.D
     :param risk_free_rate: float
     :return: scipy.optimize.OptimizeResult
     """
-    constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}    # budget equation - the sum of asset weights must be equal to 1, i.e. 100% of money is invested in the portfolio
-
+    constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}    # budget equation - 100% of money is invested in the portfolio
     bounds = tuple((0,1) for _ in range(len(assets)))
 
     optimum = optimization.minimize(fun=min_function_sharpe, x0=weights[0], args=(returns, n_trading_days, risk_free_rate), method='SLSQP',
                           constraints=constraints, bounds=bounds)
-
+    if not optimum.success:
+        raise BaseException("Optimization failed: " + optimum.message)
     return optimum
 
 
-def print_optimal_portfolio(optimum, returns, n_trading_days, risk_free_rate: float = 0.02) -> None:
+def get_gmv_portfolio(assets: list, weights: NDArray[np.float64], returns: pd.DataFrame, n_trading_days: int, risk_free_rate: float):
     """
-    Print the optimal portfolio weights and its expected return, volatility, and Sharpe ratio.
-    :param optimum: scipy.optimize.OptimizeResult
+    Optimize the portfolio weights to minimize the variance using scipy's minimize function.
+    Constraints and bounds are set to ensure that the sum of weights is equal to 1 and that each weight is between 0 and 1 (i.e. no short-selling).
+    :param assets: list of asset tickers
+    :param weights: NDArray[np.float64]
     :param returns: pd.DataFrame
     :param n_trading_days: int
-    :return None:
+    :param risk_free_rate: float
+    :return: scipy.optimize.OptimizeResult
     """
-    print('Optimal portfolio: ', optimum['x'].round(3))
-    print('Expected return, volatility and Sharpe ratio: ',
-          statistics(optimum['x'].round(3), returns, n_trading_days, risk_free_rate).round(3))
+    constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}    # budget equation - 100% of money is invested in the portfolio
+    bounds = tuple((0,1) for _ in range(len(assets)))
+
+    optimum = optimization.minimize(fun=min_function_variance, x0=weights[0], args=(returns, n_trading_days, risk_free_rate), method='SLSQP',
+                          constraints=constraints, bounds=bounds)
+    if not optimum.success:
+        raise BaseException("Optimization failed: " + optimum.message)
+    return optimum
 
 
-def show_optimal_portfolio(opt, rets, portfolio_rets, portfolio_vols, n_trading_days, risk_free_rate):
+def plot_portfolios(assets, rets, n_portfolios, n_trading_days, risk_free_rate):
     """
-    Show the optimal portfolio on the efficient frontier plot.
-    :param opt: scipy.optimize.OptimizeResult
+    Determines and plots the portfolios with (i) the highest Sharpe ratio (ii) the minimum volatility on the efficient frontier plot.
+    :param assets: list of asset tickers
     :param rets: pd.DataFrame
-    :param portfolio_rets: NDArray[np.float64]
-    :param portfolio_vols: NDArray[np.float64]
+    :param n_portfolios: int
     :param n_trading_days: int
     :param risk_free_rate: float
     :return None:
     """
+    pweights, pf_returns, pf_risks = generate_portfolios(assets, rets, n_portfolios, n_trading_days)
+    pf_sharpes = (pf_returns - risk_free_rate) / pf_risks
+    print("Maximum Sharpe Ratio: ", np.round(pf_sharpes.max(),2))
+    tangency_pf = get_tangency_portfolio(assets, pweights, rets, n_trading_days, risk_free_rate)
+    gmv_pf = get_gmv_portfolio(assets, pweights, rets, n_trading_days, risk_free_rate)
+
     plt.figure(figsize=(10, 5))
-    plt.scatter(portfolio_vols, portfolio_rets, c=portfolio_rets / portfolio_vols, marker='o')
+    plt.scatter(pf_risks, pf_returns, c=pf_sharpes, marker='o')
     plt.grid(True)
     plt.xlabel('Standard Deviation (Volatility)')
     plt.ylabel('Expected Return')
     plt.colorbar(label='Sharpe Ratio')
-    plt.plot(statistics(opt['x'], rets, n_trading_days, risk_free_rate=risk_free_rate)[1], statistics(opt['x'], rets, n_trading_days, risk_free_rate=risk_free_rate)[0], 'g*', markersize=20)
+
+    tangency_ret, tangency_vol, tangency_sharpe = get_portfolio_statistics(tangency_pf['x'], rets, n_trading_days, risk_free_rate)
+    print("Tangency Portfolio Sharpe Ratio: ", np.round(tangency_sharpe,2))
+    gmv_ret, gmv_vol, gmv_sharpe = get_portfolio_statistics(gmv_pf['x'], rets, n_trading_days, risk_free_rate)
+    print("Global Minimum Variance Portfolio Sharpe Ratio: ", np.round(gmv_sharpe,2))
+    plt.plot(tangency_vol, tangency_ret, 'g*', markersize=20, label='Tangency Portfolio (Max Sharpe Ratio)')
+    plt.plot(gmv_vol, gmv_ret, 'r*', markersize=20, label='Global Minimum Variance Portfolio')
+    plt.legend()
     plt.show()
-
-
-if __name__ == '__main__':
-    n_trading_days = 252    # 252 trading days in a year
-    n_portfolios = 10000    # number of random portfolios to generate
-
-    assets = ['AAPL', 'WMT', 'TSLA', 'GE', 'AMZN', 'DB']
-
-    start_date = date(2019, 1, 1)
-    end_date = date.today()
-
-    dataset = download_data(assets, start_date, end_date)
-    show_data(dataset, 'Date', 'Closing price')
-
-    log_daily_returns = calculate_returns(dataset)
-    show_statistics(log_daily_returns, n_trading_days)
-
-    show_data(log_daily_returns, 'Date', 'Log Return')
-
-    # expected return and volatility with an equal-weighted portfolio
-    equal_weighted_statistics = statistics(
-        np.ones(len(assets)) / len(assets), log_daily_returns, n_trading_days
-    )
-    print("Expected return: %.2f" % equal_weighted_statistics[0])
-    print("Expected standard deviation: %.2f" % equal_weighted_statistics[1])
-
-    # generate random portfolios
-    pweights, means, risks = generate_portfolios(assets, log_daily_returns, n_trading_days)
-    show_portfolios(means, risks)
-
-    # find portfolio with optimal Sharpe ratio
-    optimum  = optimize_portfolio(assets, pweights, log_daily_returns, n_trading_days, risk_free_rate=0.02)
-    print_optimal_portfolio(optimum, log_daily_returns, n_trading_days, risk_free_rate=0.02)
-    show_optimal_portfolio(optimum, log_daily_returns, means, risks, n_trading_days, risk_free_rate=0.02)
