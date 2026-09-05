@@ -1,13 +1,14 @@
+"""
+Determines the beta of a stock using the Capital Asset Pricing Model (CAPM) 
+and plots the regression line of the stock returns against the market returns.
+"""
 import numpy as np
 import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
-from yfinance.utils import camel2title
 
-# market interest rate
 RISK_FREE_RATE = 0.05
-# we will consider monthly returns - and we want to calculate annual returns
-MONTHS_IN_YEAR = 12
+MONTHS_IN_YEAR = 12     # consider monthly returns
 
 class CAPM:
 
@@ -29,9 +30,7 @@ class CAPM:
     def initialize(self):
 
         stock_data = self.download_data()
-        # we use monthly returns instead of daily returns
         stock_data = stock_data.resample('ME').last()
-        #print(stock_data.head())
 
         self.data = pd.DataFrame({'s_adjclose': stock_data[self.stocks[0]],
                                   'm_adjclose': stock_data[self.stocks[1]],})
@@ -46,14 +45,12 @@ class CAPM:
 
 
     def calculate_beta(self):
-        # extract beta via formula from CAPM
         covariance_matrix = np.cov(self.data['s_returns'], self.data['m_returns'])
         beta = covariance_matrix[0,1] / covariance_matrix[1,1]
 
         return beta
 
     def regression(self):
-        # extract beta via linear regression
         beta, alpha = np.polyfit(self.data['m_returns'], self.data['s_returns'], deg=1)
 
         expected_return = (RISK_FREE_RATE +
@@ -76,9 +73,9 @@ class CAPM:
         plt.show()
 
 if __name__ == '__main__':
-    stock = 'IBM'
+    stock = 'AAPL'
     market = '^GSPC'
-    capm = CAPM([stock, market], '2010-01-01', '2017-01-01')
+    capm = CAPM([stock, market], '2001-01-01', '2026-01-01')
     capm.initialize()
     print('Beta from formula: ', capm.calculate_beta())
     print('Beta from regression: ', capm.regression())
