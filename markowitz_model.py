@@ -197,7 +197,6 @@ def plot_portfolios(assets, rets, n_portfolios, n_trading_days, risk_free_rate):
     """
     pweights, pf_returns, pf_risks = generate_portfolios(assets, rets, n_portfolios, n_trading_days)
     pf_sharpes = (pf_returns - risk_free_rate) / pf_risks
-    print("Maximum Sharpe Ratio: ", np.round(pf_sharpes.max(),2))
     tangency_pf = get_tangency_portfolio(assets, pweights, rets, n_trading_days, risk_free_rate)
     gmv_pf = get_gmv_portfolio(assets, pweights, rets, n_trading_days, risk_free_rate)
 

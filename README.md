@@ -19,15 +19,14 @@ Key modules:
 - `markowitz_model.py` – Mean-variance portfolio optimisation, efficient frontier, find tangency portfolio.
 - `capm.py` – Beta estimation, security market line, expected returns under CAPM.
 - `black_scholes.py` – European option pricing and Greeks under the Black-Scholes model.
-- `MonteCarloOptionPricing.py` – Monte Carlo simulation for option pricing (path simulation, payoff averaging).
-- `ValueAtRisk.py` – Historical and/or parametric VaR calculations for portfolios.
-- `BondPricingWithVasicekModel.py` – Zero-coupon bond pricing under the Vasicek interest-rate model.
-- `Bonds.py` – Basic bond pricing, yield, duration, and convexity calculations.
-- `PricingFutureContract.py` – Fair futures price via cost-of-carry.
-- `PresentValue.py` – Present-value and related TVM utilities.
-- `WienerProcess.py` – Simulation of standard Brownian motion / Wiener paths.
+- `monte_carlo_option_pricing.py` – Monte Carlo simulation for option pricing (path simulation, payoff averaging).
+- `value_at_risk.py` – Historical and/or parametric VaR calculations for portfolios.
+- `vasicek_model.py` – Zero-coupon bond pricing under the Vasicek interest-rate model.
+- `bonds.py` – Basic bond pricing, yield, duration, and convexity calculations.
+- `pricing_futures_contract.py` – Fair futures price via cost-of-carry.
+- `present_value.py` – Present-value and related TVM utilities.
+- `wiener_process.py` – Simulation of standard Brownian motion / Wiener paths.
 - `get_price_returns.py` – Utilities for retrieving price time series and calculating log returns.
-- `lecture-notes.txt` – Concise notes on key formulas and concepts used across the scripts.
 
 Supporting files:
 

@@ -54,18 +54,19 @@ def present_value_continuous(fv: float, r: float, t: float) -> float:
     return fv * math.exp(-r * t)
 
 
-present_value = 1000    # PV in dollars
-r = 0.035               # risk-free rate
-n = 2                   # years
+if __name__ == "__main__":
+    present_value = 1000    # PV in dollars
+    r = 0.035               # risk-free rate
+    n = 2                   # years
 
-fv_d = future_value_discrete(present_value, r, n)
-print(f'Future value (annual compounding): ${fv_d:.2f}')  
-fv_c = future_value_continuous(present_value, r, n)
-print(f'Future value (continuous compounding): ${fv_c:.2f}')
-print(f'Absolute difference: ${abs(fv_d-fv_c):.2f}')
+    fv_d = future_value_discrete(present_value, r, n)
+    print(f'Future value (annual compounding): ${fv_d:.2f}')  
+    fv_c = future_value_continuous(present_value, r, n)
+    print(f'Future value (continuous compounding): ${fv_c:.2f}')
+    print(f'Absolute difference: ${abs(fv_d-fv_c):.2f}')
 
-pv_d = present_value_discrete(20000, 0.06, 13)
-print(f'Present value (annual compounding): ${pv_d:.2f}')
-pv_c = present_value_continuous(20000, 0.06, 13)
-print(f'Present value (continuous compounding): ${pv_c:.2f}')
-print(f'Absolute difference: ${abs(pv_d-pv_c):.2f}')
+    pv_d = present_value_discrete(20000, 0.06, 13)
+    print(f'Present value (annual compounding): ${pv_d:.2f}')
+    pv_c = present_value_continuous(20000, 0.06, 13)
+    print(f'Present value (continuous compounding): ${pv_c:.2f}')
+    print(f'Absolute difference: ${abs(pv_d-pv_c):.2f}')
