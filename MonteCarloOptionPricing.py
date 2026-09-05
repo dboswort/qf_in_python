@@ -1,3 +1,7 @@
+"""
+Monte Carlo Option Pricing
+This module provides a class for pricing European call and put options using Monte Carlo simulation.
+"""
 import numpy as np
 
 class OptionPricing:

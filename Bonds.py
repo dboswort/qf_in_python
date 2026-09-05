@@ -2,7 +2,8 @@ import math
 
 
 class ZeroCouponBond:
-    # constructor
+
+    # class constructor
     def __init__(self, principal, maturity, interest_rate):
         self.principal = principal                # face value
         self.maturity = maturity                  # time-to-maturity
@@ -22,7 +23,8 @@ class ZeroCouponBond:
 
 
 class CouponBond:
-    # constructor
+
+    # class constructor
     def __init__(self, principal, bond_rate, maturity, market_rate):
         self.principal = principal              # face value
         self.bond_rate = bond_rate / 100        # interest rate of bond

@@ -3,15 +3,14 @@ from numpy import log, exp, sqrt
 
 def call_option_price(S, E, T, rf, sigma):
     """
-    Solution from Black-Scholes equation for the price of a call (buy) option.
-    S - stock price
+    Black-Scholes equation for a European call option.
+    S - stock spot price
     E - strike price
-    T - maturity
+    T - time to expiry
     rf - risk-free rate
     sigma - volatility
     """
 
-    # calculate the d1 and d2 parameters
     d1 = (log(S/E) + (rf + sigma*sigma/2.0)*T) / (sigma*sqrt(T))
     d2 = d1 - sigma*sqrt(T)
 
@@ -19,15 +18,14 @@ def call_option_price(S, E, T, rf, sigma):
 
 def put_option_price(S, E, T, rf, sigma):
     """
-    Solution from Black-Scholes equation for the price of a put (sell) option.
-    S - stock price
+    Black-Scholes equation for a European put option.
+    S - stock spot price
     E - strike price
-    T - maturity
+    T - time to expiry
     rf - risk-free rate
     sigma - volatility
     """
 
-    # calculate the d1 and d2 parameters
     d1 = (log(S/E) + (rf + sigma*sigma/2.0)*T) / (sigma*sqrt(T))
     d2 = d1 - sigma*sqrt(T)
 
