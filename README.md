@@ -12,6 +12,8 @@ This repo contains self-contained Python scripts that implement:
 - Stochastic-process simulation (Wiener process)
 - Core building blocks (present value, normal-distribution exercises)
 
+Examples of results from this repo are given in the notebook `examples.ipynb'.
+
 ## Repository structure
 
 Key modules:
